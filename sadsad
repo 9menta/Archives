@@ -791,18 +791,73 @@ uIListLayout.Name = "UIListLayout"
 uIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 uIListLayout.Parent = tabContainerScrolling
 
-local containers = Instance.new("ScrollingFrame")
+local containers = Instance.new("Frame")
 containers.Name = "Containers"
-containers.AutomaticCanvasSize = Enum.AutomaticSize.Y
-containers.CanvasSize = UDim2.new()
-containers.ScrollBarThickness = 0
 containers.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 containers.BackgroundTransparency = 1
-containers.BorderSizePixel = 0
-containers.Position = UDim2.new(0.262, 1, 0.097, 0)
-containers.Selectable = false
-containers.Size = UDim2.new(0, 368, 0, 310)
+containers.Position = UDim2.new(0, 0, 0, 33)
+containers.Size = UDim2.new(1, 0, 0, 317)
 containers.Parent = main
+
+local Left = Instance.new("ScrollingFrame")
+Left.Name = "Left"
+Left.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Left.BackgroundTransparency = 1
+Left.BorderSizePixel = 0
+Left.Visible = false
+Left.Position = UDim2.new(0, 0, 0, 0)
+Left.Size = UDim2.new(0.5, 0, 1, 0)
+Left.ScrollBarThickness = 0
+Left.Parent = containers
+
+local leftPadding = Instance.new("UIPadding")
+leftPadding.Name = "UIPadding"
+leftPadding.PaddingLeft = UDim.new(0, 4)
+leftPadding.PaddingTop = UDim.new(0, 4)
+leftPadding.Parent = Left
+
+local leftUIListLayout = Instance.new("UIListLayout")
+leftUIListLayout.Name = "UIListLayout"
+leftUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+leftUIListLayout.Parent = Left
+
+local Right = Instance.new("ScrollingFrame")
+Right.Name = "Right"
+Right.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Right.BackgroundTransparency = 1
+Right.BorderSizePixel = 0
+Right.Visible = false
+Right.Position = UDim2.new(0.5, 0, 0, 0)
+Right.Size = UDim2.new(0.5, 0, 1, 0)
+Right.ScrollBarThickness = 0
+Right.Parent = containers
+
+local rightPadding = Instance.new("UIPadding")
+rightPadding.Name = "UIPadding"
+rightPadding.PaddingLeft = UDim.new(0, 4)
+rightPadding.PaddingTop = UDim.new(0, 4)
+rightPadding.Parent = Right
+
+local rightUIListLayout = Instance.new("UIListLayout")
+rightUIListLayout.Name = "UIListLayout"
+rightUIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+rightUIListLayout.Parent = Right
+
+-- Adiciona listeners para atualizar o tamanho do ScrollingFrame
+leftUIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Left.CanvasSize = UDim2.new(0, 0, 0, leftUIListLayout.AbsoluteContentSize.Y)
+end)
+
+rightUIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    Right.CanvasSize = UDim2.new(0, 0, 0, rightUIListLayout.AbsoluteContentSize.Y)
+end)
+
+function library:UpdateSectionLayout()
+    if Left and Right then
+        Left.CanvasSize = UDim2.new(0, 0, 0, leftUIListLayout.AbsoluteContentSize.Y + 8)
+        Right.CanvasSize = UDim2.new(0, 0, 0, rightUIListLayout.AbsoluteContentSize.Y + 8)
+    end
+end
 
 function window:Tab(Info)
 Info.Text = Info.Text or "Tab"
